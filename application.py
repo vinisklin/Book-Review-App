@@ -25,14 +25,41 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template("index.html")
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST": 
-        message = "Registered successfully!"
-        return render_template("registration.html", message=message)
+    if request.method == "POST":
+        # Read user's inputs
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-    return render_template("registration.html")
+        # Check if username is already used
+        if db.execute("SELECT * FROM users_table WHERE username = :username", {"username": username}).rowcount != 0:
+            return render_template("registration.html", message="Username is already in use. Try another one :)")
+        else:
+            # Insert new user in users's table
+            db.execute("INSERT INTO users_table (name, username, password) VALUES (:name, :username, :password)",
+                    {"name": name, "username": username, "password": password})
+            db.commit()
+            return render_template("registration.html", message="Registered successfully!")
+    else:
+        return render_template("registration.html")
+
 
 @app.route("/login", methods=["POST"])
 def login():
-    return render_template("login.html")
+    # Read user's inputs
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    user = db.execute("SELECT * FROM users_table WHERE username = :username", {"username": username}).fetchone()
+    # Check if username is in DB
+    if user == None:
+        return render_template("index.html", message="Invalid username")
+    else:
+        # Check if password is correct
+        if user.password != password:
+            return render_template("index.html", message="Invalid password")
+        else:
+            return render_template("login.html", name=user.name)
