@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+    Register Now
+{% endblock %}
+
+{% block body %}
+    <form action="" method="post">
+        <input type="text" name="name" placeholder="Your name">
+        <input type="text" name="username" placeholder="Your username">
+        <input type="password" name="password" placeholder="Your password">
+        <button>Register Now!</button>
+    </form>
+
+    <h2>{{ message }}</h2>
+
+    <a href="{{ url_for('index') }}">Go back</a>
+{% endblock %}
