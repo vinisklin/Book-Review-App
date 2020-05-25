@@ -53,7 +53,8 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    user = db.execute("SELECT * FROM users_table WHERE username = :username", {"username": username}).fetchone()
+    user = db.execute("SELECT * FROM users_table WHERE username = :username",
+                      {"username": username}).fetchone()
     # Check if username is in DB
     if user == None:
         return render_template("index.html", message="Invalid username")
@@ -63,3 +64,56 @@ def login():
             return render_template("index.html", message="Invalid password")
         else:
             return render_template("login.html", name=user.name)
+
+
+@app.route("/search-results", methods=["POST"])
+def search():
+    # Read user's inputs
+    isbn = request.form.get("searchByISBN")
+    title = request.form.get("searchByTitle")
+    author = request.form.get("searchByAuthor")
+
+    # Check if inputs aren't empty
+    if (isbn == "" and title == "" and author == ""):
+        return render_template("login.html", errorMessage='Please fill at least one field')
+
+    books = []
+    # Query to DB depending on user data
+    if (isbn != ""):
+        isbn = '%' + isbn + '%'
+        books = db.execute(
+            "SELECT * FROM books_table WHERE isbn LIKE :isbn", {"isbn": isbn}).fetchall()
+    else:
+        # User is searching only by title
+        if (author == ""):
+            title = '%' + title + '%'
+            books = db.execute(
+                "SELECT * FROM books_table WHERE title LIKE :title", {"title": title}).fetchall()
+        # User is searching only by author
+        elif (title == ""):
+            author = '%' + author + '%'
+            books = db.execute(
+                "SELECT * FROM books_table WHERE author LIKE :author", {"author": author}).fetchall()
+        # User is searching by title AND author
+        else:
+            title = '%' + title + '%'
+            author = '%' + author + '%'
+            books = db.execute("SELECT * FROM books_table WHERE author LIKE :author AND title LIKE :title", {
+                               "author": author, "title": title}).fetchall()
+
+    return render_template("search-results.html", books=books)
+
+
+@app.route("/search-results/<string:isbn>")
+def book(isbn):
+    # Get infos about the book
+    book = db.execute(
+        "SELECT * FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    if book == None:
+        return render_template("index.html", message="This book is not in our database")
+    else:
+        # Get book reviews
+        reviews = db.execute(
+            "SELECT name, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+
+        return render_template("book-page.html", book=book, reviews=reviews)

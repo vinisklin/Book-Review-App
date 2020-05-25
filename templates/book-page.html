@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+{{ book.title }}
+{% endblock %}
+
+{% block body %}
+    <h4>Author: {{ book.author }}</h4>
+    <h4>Year: {{ book.year }}</h4>
+    <h4>ISBN: {{ book.isbn }}</h4>
+
+    {% if reviews %}
+        <h2>Reviews:</h2>
+
+        {% for review in reviews %}
+            <div>
+                <h4>{{ review.name }}</h4>
+                <p>{{ review.review }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form action="" method="post">
+        <textarea name="review_text" cols="50" rows="10" placeholder=""></textarea>
+        <button type="submit">Send your review</button>
+    </form>
+
+{% endblock %}
