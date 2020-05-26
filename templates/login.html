@@ -1,7 +1,11 @@
 {% extends "layout.html" %}
 
 {% block heading %}
-    Hello {{ name }}!
+    {% if name %}
+        Hello {{ name }}!
+    {% else %}
+        {{ errorMessage }}
+    {% endif %}
 {% endblock %}
 
 {% block body %}
@@ -14,5 +18,4 @@
         <button>Search!</button>
     </form>
 
-    <h2>{{ errorMessage }}</h2>
 {% endblock %}

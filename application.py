@@ -14,6 +14,8 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config["SECRET_KEY"] = "OCML3BRawWEUeaxcuKHLpw"
+
 Session(app)
 
 # Set up database
@@ -40,7 +42,7 @@ def register():
         else:
             # Insert new user in users's table
             db.execute("INSERT INTO users_table (name, username, password) VALUES (:name, :username, :password)",
-                    {"name": name, "username": username, "password": password})
+                       {"name": name, "username": username, "password": password})
             db.commit()
             return render_template("registration.html", message="Registered successfully!")
     else:
@@ -63,8 +65,14 @@ def login():
         if user.password != password:
             return render_template("index.html", message="Invalid password")
         else:
+            # Start session for user
+            session["user_id"] = user.id
             return render_template("login.html", name=user.name)
 
+@app.route("/logout")
+def logout():
+    session.pop("user_id", None)
+    return render_template("index.html")
 
 @app.route("/search-results", methods=["POST"])
 def search():
@@ -98,22 +106,48 @@ def search():
         else:
             title = '%' + title + '%'
             author = '%' + author + '%'
-            books = db.execute("SELECT * FROM books_table WHERE author LIKE :author AND title LIKE :title", {
-                               "author": author, "title": title}).fetchall()
+            books = db.execute("SELECT * FROM books_table WHERE author LIKE :author AND title LIKE :title",
+                               {"author": author, "title": title}).fetchall()
 
     return render_template("search-results.html", books=books)
 
 
-@app.route("/search-results/<string:isbn>")
+@app.route("/search-results/<string:isbn>", methods=["GET", "POST"])
 def book(isbn):
-    # Get infos about the book
-    book = db.execute(
-        "SELECT * FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
-    if book == None:
-        return render_template("index.html", message="This book is not in our database")
-    else:
-        # Get book reviews
-        reviews = db.execute(
-            "SELECT name, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+    # Displaying infos
+    if request.method == "GET":
+        # Get infos about the book
+        book = db.execute(
+            "SELECT * FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+        if book == None:
+            return render_template("book-response.html", message="This book is not in our database")
+        else:
+            # Get book reviews
+            reviews = db.execute(
+                "SELECT name, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
 
-        return render_template("book-page.html", book=book, reviews=reviews)
+            return render_template("book-page.html", book=book, reviews=reviews)
+
+    # Posting review
+    else:
+        # Check if user is logged in
+        if not session.get("user_id"):
+            return render_template("book-response.html", message="You need to log in to publish a review")
+
+        # Get book's id
+        book_id = db.execute("SELECT id FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+        if book_id == None:
+            return render_template("book-response.html", message="This book is not in our database")
+
+        # Read user's review
+        reviewText = request.form.get("reviewText")
+
+        # Check if review is empty
+        if (reviewText != ""):
+            # Add review to database
+            db.execute("INSERT INTO reviews_table (user_id, book_id, review) VALUES (:user_id, :book_id, :review)",
+                       {"user_id": session.get("user_id"), "book_id": book_id.values().pop(), "review": reviewText})
+            db.commit()
+            return render_template("book-response.html", message="Your review has been published successfully, Thank you!")
+        else:
+            return render_template("book-response.html", message="You didn't write anything :(")
