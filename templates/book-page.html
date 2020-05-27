@@ -15,12 +15,15 @@
         {% for review in reviews %}
             <div>
                 <h4>{{ review.name }}</h4>
+                <p>{{ review.rate }}</p>
                 <p>{{ review.review }}</p>
             </div>
         {% endfor %}
     {% endif %}
 
     <form action="" method="post">
+        <label for="reviewRate">Your rate:</label>
+        <input type="range" name="reviewRate" min="1" max="5">
         <textarea name="reviewText" cols="50" rows="10" placeholder=""></textarea>
         <button type="submit">Send your review</button>
     </form>

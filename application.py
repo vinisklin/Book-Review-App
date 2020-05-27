@@ -124,30 +124,39 @@ def book(isbn):
         else:
             # Get book reviews
             reviews = db.execute(
-                "SELECT name, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", {"isbn": isbn}).fetchall()
+                "SELECT name, rate, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", 
+                {"isbn": isbn}).fetchall()
 
             return render_template("book-page.html", book=book, reviews=reviews)
 
     # Posting review
     else:
         # Check if user is logged in
-        if not session.get("user_id"):
+        user_id = session.get("user_id")
+        if not user_id:
             return render_template("book-response.html", message="You need to log in to publish a review")
 
         # Get book's id
-        book_id = db.execute("SELECT id FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
-        if book_id == None:
+        book_id_row = db.execute("SELECT id FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+        if book_id_row == None:
             return render_template("book-response.html", message="This book is not in our database")
+        book_id = book_id_row.values().pop()
 
         # Read user's review
+        rate = request.form.get("reviewRate")
         reviewText = request.form.get("reviewText")
 
-        # Check if review is empty
-        if (reviewText != ""):
+        # Check if review is not empty
+        if (reviewText == ""):
+            return render_template("book-response.html", message="You didn't write anything :(")
+        else:
+            # Check if user already reviewed this book
+            if db.execute("SELECT * FROM reviews_table WHERE user_id = :user_id AND book_id = :book_id", 
+                        {"user_id": user_id, "book_id": book_id}).fetchone() != None:
+                return render_template("book-response.html", message="You already reviewed this book!")
+
             # Add review to database
-            db.execute("INSERT INTO reviews_table (user_id, book_id, review) VALUES (:user_id, :book_id, :review)",
-                       {"user_id": session.get("user_id"), "book_id": book_id.values().pop(), "review": reviewText})
+            db.execute("INSERT INTO reviews_table (user_id, book_id, rate, review) VALUES (:user_id, :book_id, :rate, :review)",
+                       {"user_id": user_id, "book_id": book_id, "rate": rate, "review": reviewText})
             db.commit()
             return render_template("book-response.html", message="Your review has been published successfully, Thank you!")
-        else:
-            return render_template("book-response.html", message="You didn't write anything :(")

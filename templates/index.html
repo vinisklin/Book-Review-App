@@ -1,17 +1,23 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html>
 
-{% block heading %}
-    Login
-{% endblock %}
+    <head>
+        <title>Book Reviews</title>
+    </head>
 
-{% block body %}
-    <form action="{{ url_for('login') }}" method="POST">
-        <input type="text" name="username" placeholder="Enter your username">
-        <input type="password" name="password" placeholder="Enter your password">
-        <button>Submit</button>
-    </form>
+    <body>
+        <h1>Login</h1>
 
-    <h2>{{ message }}</h2>
-    
-    <a href="{{ url_for('register') }}">Not a member yet?</a>
-{% endblock %}
+        <form action="{{ url_for('login') }}" method="POST">
+            <input type="text" name="username" placeholder="Enter your username">
+            <input type="password" name="password" placeholder="Enter your password">
+            <button>Submit</button>
+        </form>
+
+        <h2>{{ message }}</h2>
+
+        <a href="{{ url_for('register') }}">Not a member yet?</a>
+
+    </body>
+
+</html>
