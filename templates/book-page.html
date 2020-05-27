@@ -21,6 +21,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if goodreadsReviews %}
+        <h2>Review Statistics (by <a href="https://www.goodreads.com/">Goodreads</a>):</h2>
+        <h4>Average Rating: {{ goodreadsReviews.average_rating }}</h4>
+        <h4>Number of ratings: {{ goodreadsReviews.work_ratings_count }}</h4>
+        
+    {% endif %}
+
     <form action="" method="post">
         <label for="reviewRate">Your rate:</label>
         <input type="range" name="reviewRate" min="1" max="5">

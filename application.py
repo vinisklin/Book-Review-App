@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, session, render_template, request
 from flask_session import Session
@@ -21,6 +22,9 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
+# Goodreads API Key
+GOODREADS_KEY = 'DjzoXWaQ4YWq84BgHFECUA'
 
 
 @app.route("/")
@@ -49,25 +53,33 @@ def register():
         return render_template("registration.html")
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    # Read user's inputs
-    username = request.form.get("username")
-    password = request.form.get("password")
+    if request.method == "POST":
+        # Read user's inputs
+        username = request.form.get("username")
+        password = request.form.get("password")
 
-    user = db.execute("SELECT * FROM users_table WHERE username = :username",
-                      {"username": username}).fetchone()
-    # Check if username is in DB
-    if user == None:
-        return render_template("index.html", message="Invalid username")
-    else:
-        # Check if password is correct
-        if user.password != password:
-            return render_template("index.html", message="Invalid password")
+        user = db.execute("SELECT * FROM users_table WHERE username = :username",
+                        {"username": username}).fetchone()
+        # Check if username is in DB
+        if user == None:
+            return render_template("index.html", message="Invalid username")
         else:
-            # Start session for user
-            session["user_id"] = user.id
-            return render_template("login.html", name=user.name)
+            # Check if password is correct
+            if user.password != password:
+                return render_template("index.html", message="Invalid password")
+            else:
+                # Start session for user
+                session["user_id"] = user.id
+                return render_template("login.html", name=user.name)
+    
+    else:
+        # Check if user is logged in
+        if not session.get("user_id"):
+            return render_template("index.html", message="Please log in first")
+        else:
+            return render_template("login.html")
 
 @app.route("/logout")
 def logout():
@@ -127,7 +139,12 @@ def book(isbn):
                 "SELECT name, rate, review FROM reviews_table JOIN books_table ON books_table.id=reviews_table.book_id JOIN users_table ON users_table.id=reviews_table.user_id WHERE isbn = :isbn", 
                 {"isbn": isbn}).fetchall()
 
-            return render_template("book-page.html", book=book, reviews=reviews)
+            # Get Goodreads review statistics
+            res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": isbn}).json()
+            if res.status_code == 200:
+                goodreadsReviews = res["books"][0]
+
+            return render_template("book-page.html", book=book, reviews=reviews, goodreadsReviews=goodreadsReviews)
 
     # Posting review
     else:
