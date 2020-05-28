@@ -13,7 +13,7 @@ In this Web App, it's possible to search for books, leave reviews, read reviews 
 To run this project you need to: 
 1. Install Python 3.x and pip. 
 2. Clone/download this repository
-3. In a terminal window, navigate into your project directory and run this commands:
+3. In a terminal window, navigate into your project directory and run these commands:
 
 ```
 $ pip3 install -r requirements.txt
