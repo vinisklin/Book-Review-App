@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -140,9 +140,9 @@ def book(isbn):
                 {"isbn": isbn}).fetchall()
 
             # Get Goodreads review statistics
-            res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": isbn}).json()
+            res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": isbn})
             if res.status_code == 200:
-                goodreadsReviews = res["books"][0]
+                goodreadsReviews = res.json()["books"][0]
 
             return render_template("book-page.html", book=book, reviews=reviews, goodreadsReviews=goodreadsReviews)
 
@@ -177,3 +177,32 @@ def book(isbn):
                        {"user_id": user_id, "book_id": book_id, "rate": rate, "review": reviewText})
             db.commit()
             return render_template("book-response.html", message="Your review has been published successfully, Thank you!")
+
+@app.route("/api/<string:isbn>")
+def api_get_json(isbn):
+    # Get book info from DB
+    book_row = db.execute("SELECT title, author, year FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    # Send an 404 if book is not on DB
+    if book_row == None:
+        return jsonify({"error": "Invalid isbn"}), 404
+    title = book_row.values()[0]
+    author = book_row.values()[1]
+    year = book_row.values()[2]
+
+    # Get review info from Goodreads
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GOODREADS_KEY, "isbns": isbn})
+    if res.status_code != 200:
+        raise Exception ("ERROR: API request unsuccessful.")
+
+    review_count = res.json()["books"][0]["work_ratings_count"]
+    average_score = res.json()["books"][0]["average_rating"]
+
+    # Return JSON
+    return jsonify ({
+        "title": title,
+        "author": author,
+        "year": year,
+        "isbn": isbn,
+        "review_count": review_count,
+        "average_score": average_score
+    })

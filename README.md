@@ -1,3 +1,32 @@
-# Project 1
+# Book Review Website
 
-Web Programming with Python and JavaScript
+Project made for the course CS50 - Web Programming with Python and Javascript
+
+In this Web App, it's possible to search for books, leave reviews, read reviews from other users and view the average rate of the book. This last one is pulled from a broader audience, via a third-party APi by Goodreads, another book review website. Users are able to query for book details and book reviews programmatically via the website’s API.
+
+## Technologies
+* Python 3.7.3
+* Flask 1.1.2
+* PostgreSQL 12.3
+
+## Setup
+To run this project you need to: 
+1. Install Python 3.x and pip. 
+2. Clone/download this repository
+3. In a terminal window, navigate into your project directory and run this commands:
+
+```
+$ pip3 install -r requirements.txt
+$ export FLASK_APP=application.py
+$ export DATABASE_URL = "postgres://fxpgscuslgeopu:3ac65b460a2b08a513c9cf999f9275cda15652baf1da02aa52160d45be5db7c8@ec2-54-175-117-212.compute-1.amazonaws.com:5432/de9bngomtahirr"
+$ flask run
+```
+
+## Features
+* Login System
+* Read/Write other user's reviews
+* Database hosted in Heroku Cloud Platform
+* API Access
+
+## Inspiration
+The development of this project was based on the content of the harvard 'CS50 - Web Programming with Python and Javascript' course classes
