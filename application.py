@@ -42,15 +42,15 @@ def register():
 
         # Check if username is already used
         if db.execute("SELECT * FROM users_table WHERE username = :username", {"username": username}).rowcount != 0:
-            return render_template("registration.html", message="Username is already in use. Try another one :)")
+            return render_template("registration.html", message="Username is already in use. Try another one :)", notRegistration=False)
         else:
             # Insert new user in users's table
             db.execute("INSERT INTO users_table (name, username, password) VALUES (:name, :username, :password)",
                        {"name": name, "username": username, "password": password})
             db.commit()
-            return render_template("registration.html", message="Registered successfully!")
+            return render_template("registration.html", message="Registered successfully!", notRegistration=False)
     else:
-        return render_template("registration.html")
+        return render_template("registration.html", notRegistration=False)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -72,14 +72,14 @@ def login():
             else:
                 # Start session for user
                 session["user_id"] = user.id
-                return render_template("login.html", name=user.name)
+                return render_template("login.html", name=user.name, notRegistration=True)
     
     else:
         # Check if user is logged in
         if not session.get("user_id"):
             return render_template("index.html", message="Please log in first")
         else:
-            return render_template("login.html")
+            return render_template("login.html", notRegistration=True)
 
 @app.route("/logout")
 def logout():
@@ -95,7 +95,7 @@ def search():
 
     # Check if inputs aren't empty
     if (isbn == "" and title == "" and author == ""):
-        return render_template("login.html", errorMessage='Please fill at least one field')
+        return render_template("login.html", errorMessage='Please fill at least one field', notRegistration=True)
 
     books = []
     # Query to DB depending on user data
@@ -121,7 +121,7 @@ def search():
             books = db.execute("SELECT * FROM books_table WHERE author LIKE :author AND title LIKE :title",
                                {"author": author, "title": title}).fetchall()
 
-    return render_template("search-results.html", books=books)
+    return render_template("search-results.html", books=books, notRegistration=True)
 
 
 @app.route("/search-results/<string:isbn>", methods=["GET", "POST"])
@@ -132,7 +132,7 @@ def book(isbn):
         book = db.execute(
             "SELECT * FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
         if book == None:
-            return render_template("book-response.html", message="This book is not in our database")
+            return render_template("book-response.html", message="This book is not in our database", notRegistration=True)
         else:
             # Get book reviews
             reviews = db.execute(
@@ -144,19 +144,19 @@ def book(isbn):
             if res.status_code == 200:
                 goodreadsReviews = res.json()["books"][0]
 
-            return render_template("book-page.html", book=book, reviews=reviews, goodreadsReviews=goodreadsReviews)
+            return render_template("book-page.html", book=book, reviews=reviews, goodreadsReviews=goodreadsReviews, notRegistration=True)
 
     # Posting review
     else:
         # Check if user is logged in
         user_id = session.get("user_id")
         if not user_id:
-            return render_template("book-response.html", message="You need to log in to publish a review")
+            return render_template("book-response.html", message="You need to log in to publish a review", notRegistration=True)
 
         # Get book's id
         book_id_row = db.execute("SELECT id FROM books_table WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
         if book_id_row == None:
-            return render_template("book-response.html", message="This book is not in our database")
+            return render_template("book-response.html", message="This book is not in our database", notRegistration=True)
         book_id = book_id_row.values().pop()
 
         # Read user's review
@@ -165,18 +165,18 @@ def book(isbn):
 
         # Check if review is not empty
         if (reviewText == ""):
-            return render_template("book-response.html", message="You didn't write anything :(")
+            return render_template("book-response.html", message="You didn't write anything :(", notRegistration=True)
         else:
             # Check if user already reviewed this book
             if db.execute("SELECT * FROM reviews_table WHERE user_id = :user_id AND book_id = :book_id", 
                         {"user_id": user_id, "book_id": book_id}).fetchone() != None:
-                return render_template("book-response.html", message="You already reviewed this book!")
+                return render_template("book-response.html", message="You already reviewed this book!", notRegistration=True)
 
             # Add review to database
             db.execute("INSERT INTO reviews_table (user_id, book_id, rate, review) VALUES (:user_id, :book_id, :rate, :review)",
                        {"user_id": user_id, "book_id": book_id, "rate": rate, "review": reviewText})
             db.commit()
-            return render_template("book-response.html", message="Your review has been published successfully, Thank you!")
+            return render_template("book-response.html", message="Your review has been published successfully, Thank you!", notRegistration=True)
 
 @app.route("/api/<string:isbn>")
 def api_get_json(isbn):

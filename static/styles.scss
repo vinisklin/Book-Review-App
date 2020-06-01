@@ -1,0 +1,181 @@
+// ------- SASS VARIABLES ---------
+$marginYSpace: 12px;
+$fontFamily: 'Baskervville', sans-serif;
+$paddingInput: 4px 20px;
+$transparency: rgba(255, 255, 255, 0.3);
+
+// ------- SASS EXTENDS ---------
+%button-appearance {
+    padding: $paddingInput;
+    background-color: #dadada;
+    border: 1px solid black;
+    font-family: $fontFamily;
+}
+
+%reviews-appearance {
+    text-align: left !important;
+    width: 80%;
+    padding: 4px 10px !important;
+}
+
+// -------- FLEXBOX -------------
+.flex-container-row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    margin: 4vh 0px;
+    
+    & > * {
+        background-color: $transparency;
+        margin: 0px;
+    }
+}
+
+.flex-container-col {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    margin: 0px 10px;
+
+    & > * {
+        margin: 0px 10px;
+    }
+}
+
+body {
+    background: url("images/background.jpg");
+    background-size: cover;
+    font-family: $fontFamily;
+}
+
+.box-principal {
+    text-align: center;
+    display: block;
+    margin: 10vh 30vw;
+    background-color: $transparency;
+    padding: 35px 0;
+}
+
+h1, h2 {
+    margin-bottom: 0.8em;
+}
+
+hr.section-divider {
+    width: 80%;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.disp-inline {
+    display: inline;
+}
+
+form > * {
+    display: block;
+    margin: 0 auto $marginYSpace auto;
+    padding: $paddingInput;
+    border-radius: 50px;
+    text-align: center;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.input-search {
+    border-radius: 50px;
+    text-align: center;
+    display: inline-block;
+}
+
+button {
+    @extend %button-appearance;
+
+    &:hover {
+        background-color: #afafaf;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: rgb(39, 39, 39);
+}
+
+.btn-search-again {
+    @extend %button-appearance;
+
+    display: block;
+    margin: 0 auto $marginYSpace auto;
+    border-radius: 50px;
+    width: fit-content;
+
+    &:hover {
+        background-color: #afafaf;
+        color: black;
+    }
+}
+
+.button-back {
+    @extend %button-appearance;
+    border-radius: 50px;
+    margin-top: 2em;
+
+    &:hover {
+        background-color: #afafaf;
+    }
+}
+
+
+// --------- Table ------------
+$tableColorPrimary: #afd9f2;
+#search-results {
+    border-collapse: collapse;
+    margin: 0 auto $marginYSpace auto;
+    width: 85%;
+    text-align: left;
+    background-color: #e1efff;
+
+    th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        background-color: $tableColorPrimary;
+    }
+    th, td {
+        border-bottom: 1px solid $tableColorPrimary;
+        padding: 8px;
+        font-family: $fontFamily;
+    }
+    tr:hover { background-color: $tableColorPrimary; }
+    td a { display: block; }
+}
+
+#average-rating {
+    font-size: 4.5em;
+    line-height: 1em;
+}
+
+.section-review, .section-write-review {
+    margin-bottom: 2 * $marginYSpace;
+}
+
+.review-box {
+    @extend %reviews-appearance;
+
+    margin: 6px auto;
+    background-color: $transparency;
+}
+
+.review-rate {
+    padding: 0;
+}
+
+textarea {
+    @extend %reviews-appearance;
+
+    border-radius: 0;
+    font-size: 1.1em;
+    font-family: $fontFamily;
+    background-color: $transparency;
+}

@@ -1,38 +1,62 @@
 {% extends "layout.html" %}
 
 {% block heading %}
-{{ book.title }}
 {% endblock %}
 
 {% block body %}
-    <h4>Author: {{ book.author }}</h4>
-    <h4>Year: {{ book.year }}</h4>
-    <h4>ISBN: {{ book.isbn }}</h4>
+    <h1 class="no-margin">{{ book.title }}</h1>
+
+    <h2 class="no-margin">by {{ book.author }}, {{ book.year }}</h2>
+    
+    {% if goodreadsReviews %}
+        <div class="flex-container-row">
+            <div class="flex-container-col">
+                <h3>Average Rating</h3>
+                <h2 id="average-rating">{{ goodreadsReviews.average_rating }}</h2>
+            </div>
+
+            <hr>
+            
+            <div class="flex-container-col">
+                <h4>{{ goodreadsReviews.work_ratings_count }} ratings</h4>
+                {% if reviews %}
+                    <h4>{{ reviews.__len__() }} reviews</h4>
+                {% else %}
+                    <h4>No reviews yet</h4>
+                {% endif %}
+                <p>Statistics by <a href="https://www.goodreads.com/">Goodreads</a></p>                
+            </div>
+        </div>
+    {% endif %}
+
+    <hr class="section-divider">
 
     {% if reviews %}
-        <h2>Reviews:</h2>
-
-        {% for review in reviews %}
-            <div>
-                <h4>{{ review.name }}</h4>
-                <p>{{ review.rate }}</p>
-                <p>{{ review.review }}</p>
-            </div>
-        {% endfor %}
+        <div class="section-review">
+            <h2>Reviews</h2>
+            
+            {% for review in reviews %}
+                <div class="review-box">
+                    <h4 class="no-margin">{{ review.name }} rated it {{ review.rate }}</h4>
+                    <p class="no-margin">{{ review.review }}</p>
+                </div>
+            {% endfor %}
+        </div>
     {% endif %}
 
-    {% if goodreadsReviews %}
-        <h2>Review Statistics (by <a href="https://www.goodreads.com/">Goodreads</a>):</h2>
-        <h4>Average Rating: {{ goodreadsReviews.average_rating }}</h4>
-        <h4>Number of ratings: {{ goodreadsReviews.work_ratings_count }}</h4>
-        
-    {% endif %}
+    <hr class="section-divider">
 
-    <form action="" method="post">
-        <label for="reviewRate">Your rate:</label>
-        <input type="range" name="reviewRate" min="1" max="5">
-        <textarea name="reviewText" cols="50" rows="10" placeholder=""></textarea>
-        <button type="submit">Send your review</button>
-    </form>
+    <div class="section-write-review">
+        <h2>Write a Review</h2>
+    
+        <form action="" method="post">
+            <h3 class="disp-inline">My rating:</h3>
+            <input class="review-rate disp-inline" type="range" name="reviewRate" min="1" max="5">
+            <textarea name="reviewText" placeholder="What did you think?"></textarea>
+            <button type="submit">Post review</button>
+        </form>
+    </div>
+
+    <a href="#" class="button-back">Go back</a>
 
 {% endblock %}

@@ -1,0 +1,159 @@
+.button-back, .btn-search-again, button {
+  padding: 4px 20px;
+  background-color: #dadada;
+  border: 1px solid black;
+  font-family: "Baskervville", sans-serif;
+}
+
+textarea, .review-box {
+  text-align: left !important;
+  width: 80%;
+  padding: 4px 10px !important;
+}
+
+.flex-container-row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  margin: 4vh 0px;
+}
+.flex-container-row > * {
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0px;
+}
+
+.flex-container-col {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-between;
+  margin: 0px 10px;
+}
+.flex-container-col > * {
+  margin: 0px 10px;
+}
+
+body {
+  background: url("images/background.jpg");
+  background-size: cover;
+  font-family: "Baskervville", sans-serif;
+}
+
+.box-principal {
+  text-align: center;
+  display: block;
+  margin: 10vh 30vw;
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 35px 0;
+}
+
+h1, h2 {
+  margin-bottom: 0.8em;
+}
+
+hr.section-divider {
+  width: 80%;
+}
+
+.no-margin {
+  margin: 0;
+}
+
+.disp-inline {
+  display: inline;
+}
+
+form > * {
+  display: block;
+  margin: 0 auto 12px auto;
+  padding: 4px 20px;
+  border-radius: 50px;
+  text-align: center;
+}
+form > *:focus {
+  outline: none;
+}
+
+.input-search {
+  border-radius: 50px;
+  text-align: center;
+  display: inline-block;
+}
+
+button:hover {
+  background-color: #afafaf;
+}
+
+a {
+  text-decoration: none;
+  color: #272727;
+}
+
+.btn-search-again {
+  display: block;
+  margin: 0 auto 12px auto;
+  border-radius: 50px;
+  width: fit-content;
+}
+.btn-search-again:hover {
+  background-color: #afafaf;
+  color: black;
+}
+
+.button-back {
+  border-radius: 50px;
+  margin-top: 2em;
+}
+.button-back:hover {
+  background-color: #afafaf;
+}
+
+#search-results {
+  border-collapse: collapse;
+  margin: 0 auto 12px auto;
+  width: 85%;
+  text-align: left;
+  background-color: #e1efff;
+}
+#search-results th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #afd9f2;
+}
+#search-results th, #search-results td {
+  border-bottom: 1px solid #afd9f2;
+  padding: 8px;
+  font-family: "Baskervville", sans-serif;
+}
+#search-results tr:hover {
+  background-color: #afd9f2;
+}
+#search-results td a {
+  display: block;
+}
+
+#average-rating {
+  font-size: 4.5em;
+  line-height: 1em;
+}
+
+.section-review, .section-write-review {
+  margin-bottom: 24px;
+}
+
+.review-box {
+  margin: 6px auto;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.review-rate {
+  padding: 0;
+}
+
+textarea {
+  border-radius: 0;
+  font-size: 1.1em;
+  font-family: "Baskervville", sans-serif;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/*# sourceMappingURL=styles.css.map */

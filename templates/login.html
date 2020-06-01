@@ -2,7 +2,7 @@
 
 {% block heading %}
     {% if name %}
-        Hello {{ name }}!
+        Hello {{ name }},
     {% else %}
         {{ errorMessage }}
     {% endif %}
@@ -12,9 +12,9 @@
     <h2>Search for a book!</h2>
 
     <form action="{{ url_for('search') }}" method="POST">
-        <input type="text" name="searchByISBN" placeholder="Search by ISBN">
-        <input type="text" name="searchByTitle" placeholder="Search by Title">
-        <input type="text" name="searchByAuthor" placeholder="Search by Author">
+        <input type="text" name="searchByISBN" class="input-search" placeholder="Search by ISBN">
+        <input type="text" name="searchByTitle" class="input-search" placeholder="Search by Title">
+        <input type="text" name="searchByAuthor" class="input-search" placeholder="Search by Author">
         <button>Search!</button>
     </form>
 

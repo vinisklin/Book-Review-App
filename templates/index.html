@@ -3,20 +3,25 @@
 
     <head>
         <title>Book Reviews</title>
+        <link href="https://fonts.googleapis.com/css2?family=Baskervville&display=swap" rel="stylesheet"> 
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     </head>
 
     <body>
-        <h1>Login</h1>
+        <div class="box-principal">
+            <h1>Book Reviews</h1>
+    
+            <form action="{{ url_for('login') }}" method="POST" autocomplete="off">
+                <input type="text" name="username" placeholder="Enter your username">
+                <input type="password" name="password" placeholder="Enter your password">
+                <button>Log In</button>
+            </form>
+    
+            <h2>{{ message }}</h2>
+    
+            <a href="{{ url_for('register') }}">Not a member yet?</a>
 
-        <form action="{{ url_for('login') }}" method="POST">
-            <input type="text" name="username" placeholder="Enter your username">
-            <input type="password" name="password" placeholder="Enter your password">
-            <button>Submit</button>
-        </form>
-
-        <h2>{{ message }}</h2>
-
-        <a href="{{ url_for('register') }}">Not a member yet?</a>
+        </div>
 
     </body>
 
