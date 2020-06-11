@@ -28,5 +28,19 @@ $ flask run
 * Database hosted in Heroku Cloud Platform
 * API Access
 
+## Screenshots
+![Login Page](/static/images/login-screen.jpg?raw=true "Login Screen")
+
+![Search Page](/static/images/search-page.jpg?raw=true "Search Page")
+
+![Book Page](/static/images/book-page.jpg?raw=true "Book Page")
+
 ## Inspiration
-The development of this project was based on the content of the harvard 'CS50 - Web Programming with Python and Javascript' course classes
+The development of this project was based on the content of the Harvard 'CS50 - Web Programming with Python and Javascript' course classes
+
+## To Do:
+* Add responsiveness to website
+* Implement back function in review page
+* Change numbers for stars in review page
+* Show user's reviews after they log in
+* Change route to user' username
